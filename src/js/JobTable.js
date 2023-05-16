@@ -4,6 +4,10 @@ import { Job } from './Job.js';
 import { JobType } from './JobType.js';
 class JobTable {
     jobs
+    salesJob
+    accountantJob
+    itWorkerJob
+    helpDeskJob
     constructor(){
         this.jobs = new Array();
         this.setUpJobs();
@@ -19,6 +23,22 @@ class JobTable {
           let newJob = new JobType();
           newJob.assignValuesToJob(parsedJob['jobName'],parsedJob['cost'], parsedJob['reward'], parsedJob['displayName']);
           console.log(newJob);
+            switch(newJob.id)
+            {
+                case "salesworker":
+                    this.salesJob = newJob;
+                    break;
+                case "accountant":
+                    this.accountantJob = newJob;
+                break;
+                case "helpdesk":
+                    this.helpDeskJob = newJob;
+                break;
+                case "itmanager":
+                    this.itWorkerJob = newJob;
+                break;
+
+            }
           this.jobs.push(newJob);
         }
     }
@@ -27,6 +47,22 @@ class JobTable {
     }
     addJob(str){
         this.jobs.push(str)
+    }
+    getSalesJob()
+    {
+        return this.salesJob;
+    }
+    getItManagerJob()
+    {
+        return this.itWorkerJob;
+    }
+    getHelpDeskJob()
+    {
+        return this.helpDeskJob;
+    }
+    getAccountantJob()
+    {
+        return this.accountantJob;
     }
     getJob(id)
     {

@@ -26,7 +26,7 @@ export class Game extends Engine {
         const player = new Player(150);
         player.graphics.use(Resources.Fish.toSprite());
         player.setPosition(200,200);
-        player.spawnNewUnit(new Job(new JobType))
+        player.spawnNewUnit(jobTable.getAccountantJob())
 
 
         this.add(player);
