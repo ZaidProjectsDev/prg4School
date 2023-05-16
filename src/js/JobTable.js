@@ -1,8 +1,26 @@
+import { ImageSource, Sound, Resource, Loader } from 'excalibur'
+import { Resources, ResourceLoader } from './resources.js'
+import { Job } from './Job.js';
+import { JobType } from './JobType.js';
 class JobTable {
     jobs
     constructor(){
+        this.jobs = new Array();
+        this.setUpJobs();
         console.log("created the jobtable")
-        this.jobs = ["lumberjack", "secretary", "it-specialist"]
+
+    }
+    setUpJobs()
+    {
+        let table =  Resources.JobTableList.path;
+        for(let i=0; i<table.length; ++i)
+        {
+            let parsedJob = table[i];
+          let newJob = new JobType();
+          newJob.assignValuesToJob(parsedJob['jobName'],parsedJob['cost'], parsedJob['reward'], parsedJob['displayName']);
+          console.log(newJob);
+          this.jobs.push(newJob);
+        }
     }
     getJobs(){
         return this.jobs

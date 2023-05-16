@@ -1,0 +1,20 @@
+[
+{
+  "jobName": "salesworker",
+  "displayName": "Sales Worker",
+  "cost": 3,
+  "reward" : 8
+},
+{
+    "jobName": "accountant",
+    "displayName": "Accountant",
+    "cost": 6,
+    "reward" : 7
+  },
+  {
+    "jobName": "itmanager",
+    "displayName": "IT Manager",
+    "cost": 8,
+    "reward" : 3
+  }
+]
