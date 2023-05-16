@@ -16,5 +16,11 @@
     "displayName": "IT Manager",
     "cost": 8,
     "reward" : 3
+  },
+  {
+    "jobName": "helpdesk",
+    "displayName": "Customer Support",
+    "cost": 8,
+    "reward" : 1
   }
 ]

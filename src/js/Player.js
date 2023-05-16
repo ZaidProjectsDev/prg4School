@@ -4,6 +4,7 @@ import { jobTable } from "./JobTable"
 
 import { Unit } from "./Unit";
 import { Job } from "./Job";
+import { Debug } from "excalibur";
 export class Player extends ResourceUser
 {
     units;
@@ -12,7 +13,6 @@ export class Player extends ResourceUser
         super();
         this.resources = ownResources;
         this.units = new Array();
-
         this.on('pointerup',()=> this.spawnNewUnit(jobTable.getJob("lumberjack")))
     }
     spawnNewUnit(job)
