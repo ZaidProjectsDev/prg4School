@@ -13,7 +13,16 @@ export class Player extends ResourceUser
         super();
         this.resources = ownResources;
         this.units = new Array();
-        this.on('pointerup',()=> this.spawnNewUnit(jobTable.getJob("lumberjack")))
+        this.on('pointerup',()=> this.spawnNewUnit(jobTable.getAccountantJob()))
+    }
+    onPostUpdate()
+    {
+        super.onPostUpdate();
+        for(let i=0; i<this.units.length; ++i)
+        {
+            console.log(this.units[i].job.displayName);
+        }
+ 
     }
     spawnNewUnit(job)
     {

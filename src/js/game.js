@@ -1,20 +1,37 @@
 import '../css/style.css'
-import { Actor, Engine, Vector } from "excalibur"
+import { Actor, Color, DisplayMode, Engine, Vector,Scene } from "excalibur"
 import { Resources, ResourceLoader } from './resources.js'
 import { ResourceUser } from './resourceUser'
 import { Player } from './Player'
 import { Job } from './Job'
 import { JobType } from './JobType'
 import { jobTable } from './JobTable'
+import {SelectableItemTable} from './SelectableItemTable.js'
+import { PlayerStatsHUD } from './PlayerStatsHUD.js'
+import { BipedPlayer } from './BipedPlayer'
+import { Physics } from 'excalibur'
+import { Stats } from './GameCore'
+import { Interactable } from './Interactable'
+import { scMainMenu } from './Scenes/scMainMenu'
 export class Game extends Engine {
 
+
+  mainPlayerStatsHud
     constructor() {
-        super({ width: 800, height: 600 })
-        this.start(ResourceLoader).then(() => this.startManagerGame())
+        super({ width: 1280, height: 720 , displayMode: DisplayMode.FitScreen})
+        Physics.useRealisticPhysics();
+        Physics.acc = new Vector(0,300);
+        this.addScene("scMainMenu", new scMainMenu());
+        this.start(ResourceLoader).then(() => this.goToScene('scMainMenu',{engine:this}));
     }
+
     startManagerGame()
     {
         console.log("starting manager game");
+        this.mainPlayerStatsHud = new PlayerStatsHUD(1280,64,new Color(0.15,0.15,0.15,1));
+        this.mainPlayerStatsHud.initalizeBaseStats(null,20,25,300);
+        this.mainPlayerStatsHud.pos = new Vector(25,25);
+        this.add(this.mainPlayerStatsHud);
 
         let jobs = jobTable.getJobs();
 
@@ -23,10 +40,12 @@ export class Game extends Engine {
         console.log(jobs[i]);
       }
 
-        const player = new Player(150);
+        const player = new BipedPlayer();
+        player.isMainPlayer = true;
+        player.initalizeStats(150,150,15,20);
         player.graphics.use(Resources.Fish.toSprite());
-        player.setPosition(200,200);
-        player.spawnNewUnit(jobTable.getAccountantJob())
+       // player.setPosition(200,200);
+       // player.spawnNewUnit(jobTable.getAccountantJob())
 
 
         this.add(player);
