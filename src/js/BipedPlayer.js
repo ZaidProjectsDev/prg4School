@@ -4,9 +4,9 @@ import { Stats } from "./GameCore"
 import { DamageType } from "./GameCore"
 export class BipedPlayer extends Biped
 {
-    constructor()
+    constructor(width,height)
     {
-        super();
+        super({width:width, height:height});
     }
 
 }

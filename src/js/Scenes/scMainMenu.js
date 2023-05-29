@@ -24,6 +24,10 @@ export class scMainMenu extends Scene
          this.optionButton.scale = new Vector(2,2);
         this.add(this.startButton);
         this.add(this.optionButton);
+
+        this.startButton.on('pointerup',function(ev){
+            engine.goToScene('scLevel1');
+        });
     }
     makeTitleCard(engine)
     {

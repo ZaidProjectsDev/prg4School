@@ -5,9 +5,9 @@ import { Collider } from "excalibur";
 export class Biped extends Interactable
 {
     stats 
-    constructor()
+    constructor(width,height)
     {
-        super({collisionType: CollisionType.Active});
+        super({width:width, height:height,collisionType: CollisionType.Active});
     }
 
 }

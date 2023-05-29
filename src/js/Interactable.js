@@ -5,9 +5,9 @@ export class Interactable extends Actor
 {
     isMainPlayer
     stats 
-    constructor()
+    constructor(width,height)
     {
-        super()
+        super({width:width,height:height})
     }
 
     initalizeStats(health,moveSpeed,jumpVelocity,ammo)

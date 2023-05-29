@@ -13,6 +13,7 @@ import { Physics } from 'excalibur'
 import { Stats } from './GameCore'
 import { Interactable } from './Interactable'
 import { scMainMenu } from './Scenes/scMainMenu'
+import { scLevel1 } from './Scenes/scLevel1'
 export class Game extends Engine {
 
 
@@ -22,6 +23,7 @@ export class Game extends Engine {
         Physics.useRealisticPhysics();
         Physics.acc = new Vector(0,300);
         this.addScene("scMainMenu", new scMainMenu());
+        this.addScene("scLevel1", new scLevel1());
         this.start(ResourceLoader).then(() => this.goToScene('scMainMenu',{engine:this}));
     }
 

@@ -45,18 +45,16 @@ export class Button extends Actor {
   createDefaultLabel(engine) {
     this.label = new Label({
       text: this.text,
-    //   width: this.backgroundImage.width,
-    //   height: this.backgroundImage.height,
-    //     textAlign: TextAlign.Center,
-    //     baseAlign: BaseAlign.Middle,
-     pos: new Vector(-64, 16),
+        width:this.width,
+        height:this.height,
       color: Color.Black,
       font: new Font({
         family: "impact",
-        size: 24,
+        size: 18,
         unit: FontUnit.Px,
       }),
     });
+    this.label.pos = new Vector(this.width*0.25,this.label.height/0.25);
     this.addChild(this.label);
     // if (this.backgroundImage != null) {
     //   this.backgroundImage.addChild(this.label);
