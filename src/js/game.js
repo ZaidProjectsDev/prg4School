@@ -1,5 +1,5 @@
 import '../css/style.css'
-import { Actor, Color, DisplayMode, Engine, Vector,Scene } from "excalibur"
+import { Actor, Color, DisplayMode, Engine, Vector,Scene, Resolution } from "excalibur"
 import { Resources, ResourceLoader } from './resources.js'
 import { ResourceUser } from './resourceUser'
 import { Player } from './Player'
@@ -19,7 +19,7 @@ export class Game extends Engine {
 
   mainPlayerStatsHud
     constructor() {
-        super({ width: 1280, height: 720 , displayMode: DisplayMode.FitScreen})
+        super({ width: 480, height: 320 ,maxFps:30, displayMode: DisplayMode.FitScreen, resolution:Resolution.GameBoyAdvance})
         Physics.useRealisticPhysics();
         Physics.acc = new Vector(0,300);
         this.addScene("scMainMenu", new scMainMenu());

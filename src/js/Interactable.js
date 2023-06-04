@@ -29,12 +29,14 @@ export class Interactable extends Actor
         if (engine.input.keyboard.isHeld(Input.Keys.D) || engine.input.gamepads.at(0).getAxes(Input.Axes.LeftStickX) > 0.5)
           {
             this.vel = new Vector(this.stats.moveSpeed,this.vel.y);
+            this.scale = new Vector(1,1);
           }
           else
           {
             if (engine.input.keyboard.isHeld(Input.Keys.A) || engine.input.gamepads.at(0).getAxes(Input.Axes.LeftStickX) < -0.5)
             {
               this.vel = new Vector(-this.stats.moveSpeed,this.vel.y);
+                this.scale = new Vector(-1,1);
             }
             else
             {

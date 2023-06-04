@@ -50,11 +50,12 @@ export class Button extends Actor {
       color: Color.Black,
       font: new Font({
         family: "impact",
-        size: 18,
+        size: 17,
         unit: FontUnit.Px,
+        textAlign:TextAlign.Center
       }),
     });
-    this.label.pos = new Vector(this.width*0.25,this.label.height/0.25);
+    //this.label.pos = new Vector(this.width*24,this.label.height*0.25);
     this.addChild(this.label);
     // if (this.backgroundImage != null) {
     //   this.backgroundImage.addChild(this.label);
