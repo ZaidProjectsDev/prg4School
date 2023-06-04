@@ -20,11 +20,6 @@ export class PlayerStatsHUD extends ScreenElement
         super({width:width,height:height,color:color});
         this.engine = engine;
         this.delta = delta;
-
-      
-    }
-    onInitialize(engine)
-    {
         this.label = new Label({
             text: 'Some text',
             pos: new Vector(0, 0),
@@ -35,8 +30,14 @@ export class PlayerStatsHUD extends ScreenElement
                 unit: FontUnit.Px
             })
         });
-        
-        this.engine.add(this.label);
+      this.label.anchor = this.pos;
+
+      this.addChild(this.label)
+      
+    }
+    onInitialize(engine)
+    {
+
     }
     initalizeBaseStats(currentPlayer,currentPlayerHealth,currentPlayerAmmo,currentPlayerScore)
     {
@@ -46,12 +47,15 @@ export class PlayerStatsHUD extends ScreenElement
         this.currentPlayerScore = currentPlayerScore;
         
     }
+    onPreUpdate(_engine, _delta) {
+        super.onPreUpdate(_engine, _delta);
+        this.label.pos = _engine.screenToWorldCoordinates(this.pos);
+        this.label.pos= new Vector(  this.label.pos.x+0,  this.label.pos.y+100)
+    }
+
     onPostUpdate(engine, delta) {
         this.label.text= `POS : ${this.player.pos}`
-      
-      }
-      onPreUpdate()
-      {
-    
+
+
       }
 }

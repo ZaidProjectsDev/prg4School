@@ -19,8 +19,8 @@ export class Game extends Engine {
 
   mainPlayerStatsHud
     constructor() {
-        super({ width: 480, height: 320 ,maxFps:30, displayMode: DisplayMode.FitScreen, resolution:Resolution.GameBoyAdvance})
-        Physics.useRealisticPhysics();
+        super({ width: 480, height: 320 ,maxFps:60, displayMode: DisplayMode.FitScreen, resolution:Resolution.GameBoyAdvance})
+
         Physics.acc = new Vector(0,300);
         this.addScene("scMainMenu", new scMainMenu());
         this.addScene("scLevel1", new scLevel1());

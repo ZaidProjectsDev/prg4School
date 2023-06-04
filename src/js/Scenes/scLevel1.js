@@ -1,4 +1,21 @@
-import {Actor, Debug, Label, Physics, Scene, Vector,Color ,Font, FontUnit, Resource, CollisionType, Collider, Rectangle, Circle, CircleCollider} from "excalibur"
+import {
+    Actor,
+    Debug,
+    Label,
+    Physics,
+    Scene,
+    Vector,
+    Color,
+    Font,
+    FontUnit,
+    Resource,
+    CollisionType,
+    Collider,
+    Rectangle,
+    Circle,
+    CircleCollider,
+    EasingFunctions, Axis
+} from "excalibur"
 import { Button } from "../Generics/Button";
 import { Resources } from "../resources";
 import { BipedPlayer } from "../BipedPlayer";
@@ -13,20 +30,19 @@ export class scLevel1 extends Scene
     engine
     ground0
     slope0
-    playerStatsHud 
+    playerStatsHud
+    xCameraSmoothOffset;
+    yCameraSmoothOffset;
     onInitialize(engine)
     {
-        engine.showDebug(true);
+      //  engine.showDebug(true);
         this.spawnPlayer(engine);
         this.playerStatsHud = new PlayerStatsHUD(32,32,Color.Red,engine,5);
         this.playerStatsHud.player = this.player;
-        this.add(this.playerStatsHud);
-        engine.currentScene.camera.strategy.elasticToActor(
-            this.player,
-            1,
-            0.5
-          )
-
+        this.engine.add(this.playerStatsHud);
+        engine.currentScene.camera.strategy.elasticToActor(this.player,1,0.1);
+        this.xCameraSmoothOffset = 0;
+        this.yCameraSmoothOffset =0;
         this.ground0 = new Actor({width : 3000, height: 64, color:Color.Red,collisionType: CollisionType.Fixed})
         this.ground0.pos = new Vector(200,600);
         this.ground0.body.collisionType = CollisionType.Fixed;
@@ -34,13 +50,17 @@ export class scLevel1 extends Scene
         let enemy = new EnemyCharacter(Resources.Fish.width,Resources.Fish.height,CollisionType.Active,300,300,false);
         enemy.pos = new Vector(engine.drawWidth/4, engine.drawHeight/2);
         enemy.health = 10;
+
+        let enemy2 = new EnemyCharacter(Resources.Fish.width,Resources.Fish.height,CollisionType.Active,300,300,false);
+        enemy.pos = new Vector(engine.drawWidth/1.25, engine.drawHeight/2);
         this.add(enemy);
+        this.add((enemy2))
         this.add(this.ground0);
     }
 
     spawnPlayer(engine)
     {
-        Physics.useArcadePhysics();
+
         Physics.gravity = new Vector(0,250);
 
         this.player = new  PlayerCharacter(Resources.Fish.width,Resources.Fish.height,CollisionType.Active,300,300,true);//BipedPlayer(Resources.Fish.width,Resources.Fish.height);
@@ -54,17 +74,54 @@ export class scLevel1 extends Scene
     }
     onPreUpdate(engine)
     {
-       engine.currentScene.camera.y-=100;
-      engine.currentScene.camera.zoom = 0.25;
-       if(this.player.vel.x>4)
+
+
+      if(this.player.grounded)
+      {
+          if(this.yCameraSmoothOffset>-1200)
+          {
+              this.yCameraSmoothOffset-=50;
+          }
+          else
+          {
+              if(this.yCameraSmoothOffset<-1200)
+              this.yCameraSmoothOffset+=50;
+          }
+      }
+      else
+      {
+
+              this.yCameraSmoothOffset+=50;
+
+
+              if(this.yCameraSmoothOffset>700)
+              this.yCameraSmoothOffset =700;
+
+      }
+
+       if(this.player.facingLeft)
        {
-        engine.currentScene.camera.x+=50;
+           if(this.xCameraSmoothOffset<300) {
+               this.xCameraSmoothOffset += 10;
+           }
+           else
+           {
+               this.xCameraSmoothOffset = 300;
+           }
        }
-       
-       if(this.player.vel.x<-4)
+       else
        {
-        engine.currentScene.camera.x-=50;
+           if(this.xCameraSmoothOffset>-300) {
+               this.xCameraSmoothOffset -= 10;
+           }
+           else
+           {
+               this.xCameraSmoothOffset = -300;
+           }
        }
+        engine.currentScene.camera.x +=this.xCameraSmoothOffset;
+        engine.currentScene.camera.y+=this.yCameraSmoothOffset;
+        engine.currentScene.camera.zoom = 0.25;
     }
     onDeactivate(engine)
     {
