@@ -10,10 +10,12 @@ import {
     GraphicsComponent,
     Animation,
     Side,
-    Timer
+    Timer,
+    CollisionGroup, Random
 } from "excalibur"
 import {Resources} from "./resources.js";
 import {Projectile} from "./Projectile.js";
+import {Weapon} from "./Weapon.js";
 
 export class PlayerCharacter extends Actor 
 {
@@ -31,14 +33,18 @@ export class PlayerCharacter extends Actor
 
     jumpTimer
     attackedSomethingSuccessfully
-    constructor(width,height,collisionType,moveSpeed,jumpHeight,isMain)
+    randomActionTimer
+    canDoRandomThing
+
+    equippedWeapon
+    constructor(width,height,collisionType,moveSpeed,jumpHeight,isMain, collisionGroup)
     {
-        super({width:width,height:height,collisionType:collisionType})
+        super({width:width,height:height,collisionType:collisionType, collisionGroup: collisionGroup})
         this.grounded = true;
         this.isMain = isMain;
         this.jumpHeight = jumpHeight;
         this.moveSpeed = moveSpeed;
-
+        this.canDoRandomThing = true;
     }
     stopJumpGravity()
     {
@@ -47,6 +53,8 @@ export class PlayerCharacter extends Actor
     hurt(vel)
     {
         if(this.health<1) {
+            if(this.isMain)
+                this.engine.triggerGameOver();
             this.kill();
         }
         else
@@ -64,6 +72,8 @@ export class PlayerCharacter extends Actor
             this.health+=-1;
         }
     }
+
+
     attackedSuccessfully()
     {
         this.attackedSomethingSuccessfully = true;
@@ -72,6 +82,17 @@ export class PlayerCharacter extends Actor
         super.onInitialize(_engine);
         this.engine = _engine;
         this.jumpTimer = new Timer({fcn:() =>this.stopJumpGravity(), interval:500});
+        const random = new Random(7000*this.pos.x);
+        this.randomActionTimer =new Timer({
+            random,
+            randomRange: [0, 1000],
+            interval: 3000,
+            fcn:() =>this.resetRandomTimer(), repeats: true
+        })
+    this.engine.add(this.randomActionTimer)
+        this.randomActionTimer.start();
+            //new Timer({fcn:() => this.resetRandomTimer(), interval:300})
+
         this.engine.add(this.jumpTimer);
         this.leftAnimation = Resources.Fish.toSprite();
         this.leftAnimation.scale = new Vector(-1,1);
@@ -80,8 +101,9 @@ export class PlayerCharacter extends Actor
         this.on('postcollision',(evt) => this.checkCollision(evt));
         if(this.health== null || this.health ==0)
         {
-            this.health = 10;
+            this.health = 1;
         }
+
     }
     onPostUpdate(_engine, _delta) {
         super.onPostUpdate(_engine, _delta);
@@ -95,44 +117,60 @@ export class PlayerCharacter extends Actor
         }
         if(this.attackedSomethingSuccessfully)
         {
-            this.engine.currentScene.camera.shake(100, 100,100);
+            if(this.isMain) {
+                this.engine.currentScene.camera.shake(100, 100, 100);
+            }
             this.attackedSomethingSuccessfully = false;
         }
     }
     //Combat
     fireWeapon(facingLeft)
     {
-        let projectile = new Projectile(this, 2, 5, 5, Color.Red, null,5);
-        if(facingLeft) {
-            projectile.pos = new Vector(this.pos.x + 1, this.pos.y + 2);
-            projectile.vel = new Vector(1200, this.vel.y*0.5);
-        }
-        else
+        if(this.equippedWeapon!=null)
         {
-            projectile.pos = new Vector(this.pos.x - 1, this.pos.y + 2);
-            projectile.vel = new Vector(-1200, this.vel.y*0.5);
+            this.equippedWeapon.fire(facingLeft);
         }
-        if(!this.attackedSomethingSuccessfully)
-        this.engine.currentScene.camera.shake(0, 2,10);
-        this.engine.add(projectile);
     }
     checkCollision(evt)
     {
         if (evt.side === Side.Bottom) {
             this.grounded = true;
         }
-        if(evt.other instanceof PlayerCharacter)
+        if(evt.other instanceof Weapon)
         {
-
+            console.log("TOUCHED WEAPON");
+            if(!evt.other.pickedUp && !this.equippedWeapon)
+            {
+                evt.other.pickUpWeapon(this);
+            }
         }
     }
+    randomFireWeapon()
+    {
+        this.fireWeapon(this.facingLeft);
 
+    }
+    randomJump()
+    {
+        this.vel = new Vector(this.vel.x, -500);
+        this.grounded = false;
+        this.jumpTimer.reset();
+        this.jumpTimer.start();
+        this.jumping = true;
+    }
+
+    resetRandomTimer()
+    {
+        this.canDoRandomThing  = true;
+        console.log("Random")
+    }
     onPreUpdate()
     {
         if(!this.jumping && !this.grounded)
         {
             this.vel = new Vector(this.vel.x, Physics.gravity.y*2);
         }
+
         if(this.isMain)
         {
             if(this.engine.input.keyboard.isHeld(Input.Keys.Space) || this.engine.input.gamepads.at(0).isButtonPressed(Input.Buttons.Face1))

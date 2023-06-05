@@ -14,15 +14,14 @@ import {
     Rectangle,
     Circle,
     CircleCollider,
-    EasingFunctions, Axis
+    EasingFunctions, Axis, range, Animation, AnimationStrategy
 } from "excalibur"
-import { Button } from "../Generics/Button";
 import { Resources } from "../resources";
-import { BipedPlayer } from "../BipedPlayer";
-import { Player } from "../Player";
 import { PlayerCharacter } from "../PlayerCharacter";
 import { PlayerStatsHUD } from "../PlayerStatsHUD";
 import {EnemyCharacter} from "../EnemyCharacter.js";
+import {WeaponType} from "../WeaponType.js";
+import {Weapon} from "../Weapon.js";
 
 export class scLevel1 extends Scene
 {
@@ -33,9 +32,18 @@ export class scLevel1 extends Scene
     playerStatsHud
     xCameraSmoothOffset;
     yCameraSmoothOffset;
+    initalized
     onInitialize(engine)
     {
-      //  engine.showDebug(true);
+        if(!this.initalized) {
+            this.startEntireScene(engine);
+            this.initalized = true;
+        }
+
+    }
+    startEntireScene(engine)
+    {
+        //  engine.showDebug(true);
         this.spawnPlayer(engine);
         this.playerStatsHud = new PlayerStatsHUD(32,32,Color.Red,engine,5);
         this.playerStatsHud.player = this.player;
@@ -47,23 +55,35 @@ export class scLevel1 extends Scene
         this.ground0.pos = new Vector(200,600);
         this.ground0.body.collisionType = CollisionType.Fixed;
 
-        let enemy = new EnemyCharacter(Resources.Fish.width,Resources.Fish.height,CollisionType.Active,300,300,false);
+        let enemy = new EnemyCharacter(Resources.Fish.width,Resources.Fish.height,CollisionType.Active,300,300,false,engine.playerCollisionCollideWith);
         enemy.pos = new Vector(engine.drawWidth/4, engine.drawHeight/2);
         enemy.health = 10;
 
-        let enemy2 = new EnemyCharacter(Resources.Fish.width,Resources.Fish.height,CollisionType.Active,300,300,false);
+        let enemy2 = new EnemyCharacter(Resources.Fish.width,Resources.Fish.height,CollisionType.Active,300,300,false, engine.playerCollisionCollideWith);
         enemy.pos = new Vector(engine.drawWidth/1.25, engine.drawHeight/2);
         this.add(enemy);
         this.add((enemy2))
         this.add(this.ground0);
-    }
 
+
+        const testWeaponType =new WeaponType(Resources._bazooka, Animation.fromSpriteSheet(engine.fireEffectSpriteSheet,range(0,2),100, AnimationStrategy.Loop),100);
+        const testWeapon = new Weapon(testWeaponType,null);
+        for(let i=0; i<5; ++i)
+        {
+            const newWeapon = new Weapon(testWeaponType,null);
+            newWeapon.pos = new Vector(this.player.pos.x+100*i, this.player.pos.y+3*i)
+            newWeapon.vel = new Vector(i,-5);
+            this.add(newWeapon);
+        }
+
+        this.add(testWeapon);
+    }
     spawnPlayer(engine)
     {
 
         Physics.gravity = new Vector(0,250);
 
-        this.player = new  PlayerCharacter(Resources.Fish.width,Resources.Fish.height,CollisionType.Active,300,300,true);//BipedPlayer(Resources.Fish.width,Resources.Fish.height);
+        this.player = new  PlayerCharacter(Resources.Fish.width,Resources.Fish.height,CollisionType.Active,300,300,true, engine.playerCollisionCollideWith);//BipedPlayer(Resources.Fish.width,Resources.Fish.height);
         this.player.graphics.use(Resources.Fish.toSprite());
         this.player.pos = new Vector(engine.drawWidth/2, engine.drawHeight/2);
         this.player.body.collisionType = CollisionType.Active;
@@ -125,6 +145,12 @@ export class scLevel1 extends Scene
     }
     onDeactivate(engine)
     {
-        this.player.kill();
+       this.clear(false);
+    }
+    onActivate(_context) {
+        super.onActivate(_context);
+            if(this.isInitialized)
+            this.startEntireScene(_context.engine);
+
     }
 }
