@@ -19,14 +19,16 @@ import {scGameOver} from "./Scenes/scGameOver.js";
 export class Game extends Engine {
 
     playerCollisionCollideWith
+    weaponCollisionCollideWith
     solidCollision
+    weaponCollision
     mainPlayerStatsHud
 
     fireEffectSpriteSheet;
     fireEffectAnimation;
     scoreTracker;
     constructor() {
-        super({ width: 480, height: 320 ,maxFps:60, displayMode: DisplayMode.FitScreen, resolution:Resolution.GameBoyAdvance})
+        super({ width: 480, height: 320 ,maxFps:60, displayMode: DisplayMode.FitScreen, antialiasing:false, resolution:Resolution.GameBoyAdvance})
         this.scoreTracker = new ScoreTracker();
         Physics.acc = new Vector(0,300);
         this.addScene("scMainMenu", new scMainMenu());
@@ -37,9 +39,13 @@ export class Game extends Engine {
     onInitialize(_engine) {
         super.onInitialize(_engine);
         this.solidCollision = CollisionGroupManager.create("solid");
+        this.weaponCollision = CollisionGroupManager.create("weapons")
         this.playerCollisionCollideWith = CollisionGroup.collidesWith([
-            this.solidCollision,
+            this.solidCollision,this.weaponCollision
         ])
+
+
+
         this.fireEffectSpriteSheet = SpriteSheet.fromImageSource({
             image:Resources._fireEffect,
             grid: {
@@ -53,8 +59,6 @@ export class Game extends Engine {
 
         this.add(this.fireEffectSpriteSheet);
         this.fireEffectAnimation = Animation.fromSpriteSheet( this.fireEffectSpriteSheet,range(0,2),100);
-        ScoreTracker.instance.addToScore(5000);
-        console.log(ScoreTracker.instance.getScore());
     }
     triggerGameOver()
     {

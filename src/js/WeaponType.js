@@ -13,7 +13,4 @@ export class WeaponType
         this.weaponGraphicLeft = weaponGraphic.toSprite();
         this.weaponGraphicLeft.scale = new Vector(-1,1);
     }
-
-
-
 }

@@ -16,6 +16,7 @@ import {
 import {Resources} from "./resources.js";
 import {Projectile} from "./Projectile.js";
 import {Weapon} from "./Weapon.js";
+import {ScoreTracker} from "./ScoreTracker.js";
 
 export class PlayerCharacter extends Actor 
 {
@@ -101,7 +102,7 @@ export class PlayerCharacter extends Actor
         this.on('postcollision',(evt) => this.checkCollision(evt));
         if(this.health== null || this.health ==0)
         {
-            this.health = 1;
+            this.health = 20;
         }
 
     }
@@ -118,7 +119,7 @@ export class PlayerCharacter extends Actor
         if(this.attackedSomethingSuccessfully)
         {
             if(this.isMain) {
-                this.engine.currentScene.camera.shake(100, 100, 100);
+                ScoreTracker.instance.addToScore(300);
             }
             this.attackedSomethingSuccessfully = false;
         }
@@ -145,19 +146,6 @@ export class PlayerCharacter extends Actor
             }
         }
     }
-    randomFireWeapon()
-    {
-        this.fireWeapon(this.facingLeft);
-
-    }
-    randomJump()
-    {
-        this.vel = new Vector(this.vel.x, -500);
-        this.grounded = false;
-        this.jumpTimer.reset();
-        this.jumpTimer.start();
-        this.jumping = true;
-    }
 
     resetRandomTimer()
     {
@@ -170,7 +158,10 @@ export class PlayerCharacter extends Actor
         {
             this.vel = new Vector(this.vel.x, Physics.gravity.y*2);
         }
-
+        if(this.pos.y>900)
+        {
+            this.hurt(1000)
+        }
         if(this.isMain)
         {
             if(this.engine.input.keyboard.isHeld(Input.Keys.Space) || this.engine.input.gamepads.at(0).isButtonPressed(Input.Buttons.Face1))
